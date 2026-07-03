@@ -1,0 +1,14 @@
+{
+  "name": "apis",
+  "version": "0.0.1",
+  "description": "Compiler-based reactive UI framework.",
+  "type": "module",
+  "main": "src/runtime/index.js",
+  "scripts": {
+    "test": "mocha test/**/*.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "mocha": "^11.7.6"
+  }
+}
