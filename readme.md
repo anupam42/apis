@@ -76,10 +76,14 @@ value fires the callback (DOM update, prop push to a child component, store writ
 
 ### Reactivity
 * Assignment-driven reactivity (`name = 'user'`) — no virtual DOM, no proxies
-* Reactive statements with `$:`
+* Reactive statements with `$:` (compiled to a `prefixPush`-scheduled watch, `code.js`)
 * Explicit watchers: `$watch(fn, callback, lvl)`
 * `immutable` option and deep checking (`prop|deep`, `deepCheckingProps`)
-* Stores with autosubscription (`!no-autosubscribe` to opt out)
+* Stores with autosubscription (`!no-autosubscribe` to opt out) — any lowercase-named
+  import with a `.subscribe(fn)` method is wired to re-run the digest on change
+* Store helpers `writable`/`readable`/`derived` (`src/store.js`, exported from
+  `apisjs/runtime.js`) implementing that `.subscribe()` contract so you don't have
+  to hand-roll it
 
 ### Template blocks
 * Conditionals: `#if`, `:else`, `:else-if`
@@ -100,6 +104,10 @@ value fires the callback (DOM update, prop push to a child component, store writ
 * Key events: `enter`, `tab`, `esc`, `space`, arrow keys, `delete`
 * Two-way bindings, incl. `radio`, `select`, `range`/`number` (value as number)
 * Actions (`use:`), inline actions, actions returning a destroy function
+* Transitions: `transition:`/`in:`/`out:` directives (`src/parts/transition.runtime.js`)
+  with a built-in `fade`/`fly`/`scale`/`slide` library. Outro transitions hook into
+  the existing `share.destroyResults` mechanism that `#if`/`#each` already used for
+  async destroy — no changes needed to their mount/unmount logic to make this work
 * Spread props and objects `{...obj}`
 * `$props`, `$attributes`, `$restProps`
 * `export const` constant props, `export function`
@@ -127,34 +135,49 @@ value fires the callback (DOM update, prop push to a child component, store writ
 
 ## Next up (near-term priority)
 
-These are the highest-leverage additions for day-to-day app building — picked because
-they cover what devs reach for constantly in Svelte-like frameworks, more than any of
-the longer-tail roadmap items below:
+These were picked as the highest-leverage additions for day-to-day app building —
+what devs reach for constantly in Svelte-like frameworks, more than any of the
+longer-tail roadmap items below. Turned out most of this list was already built
+into the compiler/runtime we inherited; verified each by actually compiling and
+running a component, not just reading the source:
 
-- [ ] **Stores + `$:` reactive statements** — shared state without prop drilling.
-  `$:` already has a line item under Reactivity & DX; a store contract
-  (`writable`/`readable`/`derived`) plus autosubscription is the piece that makes
-  cross-component state practical.
-- [ ] **Actions (`use:`)** — reusable, composable DOM behavior attached to an element
-  (tooltips, click-outside, drag handles) without writing a child component.
-- [ ] **Transitions (`transition:`/`in:`/`out:`)** — a built-in animation library
-  (fade, fly, slide, scale) wired into `#if`/`#each` mount/unmount.
-- [ ] **TypeScript (`<script lang="ts">`)** — type erasure only: strip types at
-  compile time via the `typescript` package's `transpileModule`, then feed the
-  resulting plain JS into the existing `code.js`/acorn pipeline unchanged. No
-  in-compiler type-checking (that's a much larger, slower feature — left as a
+- [x] **`$:` reactive statements** — already implemented (`code.js`, `LabeledStatement`
+  with label `$` → compiled to a `prefixPush`-scheduled watch). Verified: compiles and
+  updates a derived value when its dependency changes.
+- [x] **Actions (`use:`)** — already implemented (`parts/prop.js` → `$runtime.bindAction`,
+  `runtime/base.js`). Verified: compiles and runs on element mount.
+- [x] **Stores** — the `.subscribe()` autosubscription mechanism already existed
+  (`builder.js`/`runtime/base.js`); added the missing piece, `writable`/`readable`/
+  `derived` helpers (`src/store.js`) implementing that contract. Verified: a
+  `writable` counter updates a bound template expression through a real click event.
+- [x] **Transitions (`transition:`/`in:`/`out:`)** — genuinely new. Added parser/compiler
+  support (`parts/prop.js`) and a runtime tween engine + `fade`/`fly`/`scale`/`slide`
+  library (`parts/transition.runtime.js`). Outro transitions plug into the
+  `share.destroyResults` mechanism `#if`/`#each` already use to defer async destroy —
+  no changes needed to their mount/unmount logic. Verified: an outro-faded `<p>` stays
+  in the DOM until its transition's `duration` elapses, then is removed.
+- [ ] **TypeScript (`<script lang="ts">`)** — not started. Plan: type erasure only —
+  strip types at compile time via the `typescript` package's `transpileModule`, then
+  feed the resulting plain JS into the existing `code.js`/acorn pipeline unchanged.
+  No in-compiler type-checking (that's a much larger, slower feature — left as a
   separate, lower-priority roadmap item below); real type-checking stays the
   editor's/`tsc`'s job, same as Svelte/Vue SFCs.
+
+Known rough edge from this pass: the `autoSubscribe` heuristic treats *any*
+lowercase-first-letter import as a store candidate (checked for a `.subscribe`
+method at runtime, so it's harmless, just slightly wasteful) — e.g. importing
+`fade`/`writable` themselves triggers a no-op `autoSubscribe()` call. Not worth
+fixing now; noted here so it isn't mistaken for a new bug later.
 
 ## TODO / Roadmap
 
 ### Animation & transitions
-- [ ] First-class `transition:` / `in:` / `out:` directives with a built-in library (fade, fly, slide, scale)
+- [x] First-class `transition:` / `in:` / `out:` directives with a built-in library (fade, fly, slide, scale) — see "Next up" above
 - [ ] `animate:` directive for FLIP list reordering in `#each`
 
 ### Reactivity & DX
 - [ ] Optional fine-grained signals to reduce dirty-checking overhead
-- [ ] Official store library (`writable` / `readable` / `derived`)
+- [x] Official store library (`writable` / `readable` / `derived`) — see "Next up" above
 - [ ] Improved async batching around `tick()`
 - [ ] `$effect` / `$derived` runes-style primitives as an ergonomic alternative to `$:`
 - [ ] `$inspect` debugging helper to log reactive value changes in dev mode

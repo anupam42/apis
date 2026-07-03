@@ -10,3 +10,5 @@ export * from '../parts/slot.runtime';
 export * from '../parts/keep-alive.runtime';
 export * from '../parts/select.runtime.js';
 export * from '../parts/radio.runtime.js';
+export * from '../parts/transition.runtime.js';
+export * from '../store.js';

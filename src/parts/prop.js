@@ -253,6 +253,25 @@ export function bindProp(prop, node, element) {
         ctx.writeLine('});');
       })
     };
+  } else if (name == 'transition' || name == 'in' || name == 'out') {
+    assert(arg && isSimpleName(arg), 'Wrong transition: ' + prop.content);
+    // Unlike use:, transition functions are commonly imported (fade/fly/slide/scale
+    // from the runtime, or a user's own library), so importedNames counts too.
+    const known = this.script.rootVariables[arg] || this.script.rootFunctions[arg] || this.script.importedNames.includes(arg);
+    if (!known) this.warning({ message: 'No name: ' + arg });
+    let args = prop.value ? unwrapExp(prop.value) : null;
+    if (args) this.detectDependency(args);
+
+    return {
+      bind: xNode('transition', {
+        kind: name,
+        name: arg,
+        args,
+        el: element.bindName()
+      }, (ctx, n) => {
+        ctx.writeLine(`$runtime.bindTransition(${n.el}, ${n.name}, ${n.args ? `() => (${n.args})` : 'null'}, '${n.kind}');`);
+      })
+    };
   } else if (name == 'class') {
     if (node.__skipClass) return {};
     node.__skipClass = true;
