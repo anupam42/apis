@@ -1,14 +1,42 @@
 {
-  "name": "apis",
+  "name": "apisjs",
   "version": "0.0.1",
-  "description": "Compiler-based reactive UI framework.",
-  "type": "module",
-  "main": "src/runtime/index.js",
+  "description": "Compiler-based reactive UI framework for building fast, ultra-light web apps with no runtime framework, using standard HTML, CSS, and JavaScript.",
+  "keywords": [
+    "apis",
+    "apisjs",
+    "compiler",
+    "reactive",
+    "ui-framework",
+    "frontend",
+    "no-framework",
+    "lightweight",
+    "web-components"
+  ],
   "scripts": {
-    "test": "mocha test/**/*.test.js"
+    "build": "rollup -c",
+    "test": "mocha ./test/run.js",
+    "test-debug": "node --inspect-brk ./node_modules/.bin/mocha ./test/run.js",
+    "fix": "npx standardx --fix ./src/"
   },
   "devDependencies": {
+    "acorn": "^8.17.0",
+    "astring": "^1.9.0",
     "jsdom": "^29.1.1",
-    "mocha": "^11.7.6"
-  }
+    "mocha": "^11.7.6",
+    "rollup": "^4.62.2",
+    "standardx": "^7.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3"
+  },
+  "type": "module",
+  "main": "runtime.js",
+  "files": [
+    "apis.mjs",
+    "apis.js",
+    "runtime.js",
+    "apis-rollup.js",
+    "apis-esbuild.js",
+    "plugins/sass.js",
+    "plugins/static-text.js"
+  ]
 }

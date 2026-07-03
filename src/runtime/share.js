@@ -1,15 +1,3 @@
-// Tracks which change-detector is "active" while a component tree is being built,
-// so runtime helpers (bindText, bindAttribute, ...) know where to register watchers.
-const stack = [];
-
-export function pushCD(cd) {
-  stack.push(cd);
-}
-
-export function popCD() {
-  stack.pop();
-}
-
-export function currentCD() {
-  return stack[stack.length - 1];
-}
+export let current_destroyList, current_mountList, current_cd, destroyResults;
+export const $onDestroy = fn => fn && current_destroyList.push(fn);
+export const $onMount = fn => current_mountList.push(fn);
