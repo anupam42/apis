@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 120 130" role="img" aria-label="Apis.js logo">
+  <defs>
+    <linearGradient id="apisGold" x1="30" y1="12" x2="35" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fdf1cf"/>
+      <stop offset="0.55" stop-color="#f3ae3d"/>
+      <stop offset="1" stop-color="#c5720f"/>
+    </linearGradient>
+    <linearGradient id="apisDark" x1="80" y1="12" x2="90" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3d4350"/>
+      <stop offset="1" stop-color="#15110b"/>
+    </linearGradient>
+    <linearGradient id="apisFold" x1="14" y1="70" x2="40" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c5720f"/>
+      <stop offset="1" stop-color="#8a4a0a"/>
+    </linearGradient>
+    <linearGradient id="apisWing" x1="42" y1="82" x2="78" y2="98" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8c876"/>
+      <stop offset="1" stop-color="#e0932c"/>
+    </linearGradient>
+  </defs>
+  <path d="M60,10 L13,104 A13,13 0 0 0 39,102 Z" fill="url(#apisGold)"/>
+  <path d="M42,72 L13,104 A13,13 0 0 0 39,102 L42,90 Z" fill="url(#apisFold)" opacity="0.75"/>
+  <path d="M60,10 L81,102 A13,13 0 0 0 107,104 Z" fill="url(#apisDark)"/>
+  <path d="M42,98 Q60,82 78,98 Q60,92 42,98 Z" fill="url(#apisWing)"/>
+</svg>
