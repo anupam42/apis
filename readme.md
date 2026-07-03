@@ -125,6 +125,27 @@ value fires the callback (DOM update, prop push to a child component, store writ
   `js:before`, `js`, `js:after`, `css:before`, `css`, `runtime:before`, `runtime`,
   `build:before`, `build` (see `hook()` in `src/main.js`)
 
+## Next up (near-term priority)
+
+These are the highest-leverage additions for day-to-day app building — picked because
+they cover what devs reach for constantly in Svelte-like frameworks, more than any of
+the longer-tail roadmap items below:
+
+- [ ] **Stores + `$:` reactive statements** — shared state without prop drilling.
+  `$:` already has a line item under Reactivity & DX; a store contract
+  (`writable`/`readable`/`derived`) plus autosubscription is the piece that makes
+  cross-component state practical.
+- [ ] **Actions (`use:`)** — reusable, composable DOM behavior attached to an element
+  (tooltips, click-outside, drag handles) without writing a child component.
+- [ ] **Transitions (`transition:`/`in:`/`out:`)** — a built-in animation library
+  (fade, fly, slide, scale) wired into `#if`/`#each` mount/unmount.
+- [ ] **TypeScript (`<script lang="ts">`)** — type erasure only: strip types at
+  compile time via the `typescript` package's `transpileModule`, then feed the
+  resulting plain JS into the existing `code.js`/acorn pipeline unchanged. No
+  in-compiler type-checking (that's a much larger, slower feature — left as a
+  separate, lower-priority roadmap item below); real type-checking stays the
+  editor's/`tsc`'s job, same as Svelte/Vue SFCs.
+
 ## TODO / Roadmap
 
 ### Animation & transitions
@@ -153,7 +174,8 @@ value fires the callback (DOM update, prop push to a child component, store writ
 - [ ] Custom event modifiers and modifier composition
 
 ### Tooling & ecosystem
-- [ ] **TypeScript support** in `<script lang="ts">` with generated component `.d.ts` types
+- [ ] Full in-compiler TypeScript type-checking + generated component `.d.ts` types
+  (separate from, and lower priority than, the type-erasure support under "Next up")
 - [ ] **SSR / hydration** and a meta-framework (routing, SSG, islands)
 - [ ] Vite plugin
 - [ ] Language server for VS Code (diagnostics, go-to-definition)
